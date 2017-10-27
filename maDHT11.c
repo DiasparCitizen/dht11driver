@@ -88,19 +88,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 		i++;
 	}
 
-	// Interpret data
-	raw_data.humidity_integer	= read_byte_from_array(&lengths[0]);
-	raw_data.humidity_dec		= read_byte_from_array(&lengths[8]);
-	raw_data.temp_integer		= read_byte_from_array(&lengths[16]);
-	raw_data.temp_dec			= read_byte_from_array(&lengths[24]);
-	raw_data.checksum			= read_byte_from_array(&lengths[32]);
+	if (error){
 
-	// Build results
-	reading.temperature = raw_data.temp_integer;
-	reading.humidity = raw_data.humidity_integer;
-	reading.valid = !error
-		&& raw_data.checksum == (raw_data.temp_integer + raw_data.temp_dec + raw_data.humidity_integer + raw_data.humidity_dec);
+		reading.valid = FALSE;
+
+	}else{
+
+		// Interpret data
+		raw_data.humidity_integer	= read_byte_from_array(&lengths[0]);
+		raw_data.humidity_dec		= read_byte_from_array(&lengths[8]);
+		raw_data.temp_integer		= read_byte_from_array(&lengths[16]);
+		raw_data.temp_dec			= read_byte_from_array(&lengths[24]);
+		raw_data.checksum			= read_byte_from_array(&lengths[32]);
+
+		// Build results
+		reading.temperature = raw_data.temp_integer;
+		reading.humidity = raw_data.humidity_integer;
+		reading.valid = raw_data.checksum == (raw_data.temp_integer + raw_data.temp_dec + raw_data.humidity_integer + raw_data.humidity_dec);
 	
+	}
+
 	return reading;
 
  }
